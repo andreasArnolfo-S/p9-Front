@@ -10,12 +10,13 @@ import { waitFor } from '@testing-library/dom';
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
-    test("Then ...", () => {
+    test("should render a New Bill form", () => {
       const html = NewBillUI()
       document.body.innerHTML = html
-      //to-do write assertion
-
+      const newBillForm = screen.getByTestId('form-new-bill')
+      expect(newBillForm).toBeTruthy()
     })
+
     // describe("when i submit the new bill", () => {
     //   /* Checking if the new bill is added on list of bills */
     //   test("Then new bill should be added on list of bills", async () => {
