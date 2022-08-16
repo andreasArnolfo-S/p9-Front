@@ -39,6 +39,8 @@ describe("Given I am connected as an employee", () => {
       expect(dates).toEqual(datesSorted)
     })
 
+    //----------------------Andreas---------------------------//
+
     /* Checking if all bills have a eyes icon */
     test("Then all bills should have a eyes icon", () => {
       document.body.innerHTML = BillsUI({ data: bills })
@@ -72,6 +74,24 @@ describe("Given I am connected as an employee", () => {
       newBillButton.click()
       const url = window.location.hash
       expect(url).toBe(ROUTES_PATH.NewBill)
+    })
+
+    /* checking erreur 404 */
+    test("fail fetches bills and 404 message error appear", async () => {
+      /* fail to get localStorage */
+      
+      const html = BillsUI({ error: "Erreur 404" })
+      document.body.innerHTML = html
+      const message = await screen.getByText(/Erreur 404/)
+      expect(message).toBeTruthy()
+    })
+
+    test("fetches messages and fails with 500 message error", async () => {
+
+      const html = BillsUI({ error: "Erreur 500" })
+      document.body.innerHTML = html
+      const message = await screen.getByText(/Erreur 500/)
+      expect(message).toBeTruthy()
     })
 
   })

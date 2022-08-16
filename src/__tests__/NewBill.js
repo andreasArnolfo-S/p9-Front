@@ -7,6 +7,7 @@ import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
 import { waitFor } from '@testing-library/dom';
 
+/-------andreas-------/
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
@@ -17,27 +18,48 @@ describe("Given I am connected as an employee", () => {
       expect(newBillForm).toBeTruthy()
     })
 
-    // describe("when i submit the new bill", () => {
-    //   /* Checking if the new bill is added on list of bills */
-    //   test("Then new bill should be added on list of bills", async () => {
+    test("Then it should render 8 entries", () => {
+      const html = NewBillUI()
+      document.body.innerHTML = html
+      
+      const expenseTypeInput = screen.getByTestId('expense-type')
+      expect(expenseTypeInput).toBeTruthy()
 
-    //     const html = NewBillUI()
-    //     document.body.innerHTML = html
-    //     const newBill = {
-    //       id: '1',
-    //       date: '2025-01-01',
-    //       amount: '100',
-    //       description: 'test',
-    //       name: 'test',
-    //       Image: 'test.png'
-    //     }
+      const expenseNameInput = screen.getByTestId('expense-name')
+      expect(expenseNameInput).toBeTruthy()
 
-    //     const newBillForm = screen.getByTestId('form-new-bill')
-    //     newBillForm.submit(newBill)
-    //     await waitFor(() => screen.getByTestId('tbody'))
-    //     const bill = screen.getByTestId('tbody')
-    //     expect(bill.length).toEqual(12)
-    //   })
-    // })
+      const datePicker = screen.getByTestId('datepicker')
+      expect(datePicker).toBeTruthy()
+
+      const amountInput = screen.getByTestId('amount')
+      expect(amountInput).toBeTruthy()
+
+      const vatInput = screen.getByTestId('vat');
+      expect(vatInput).toBeTruthy()
+
+      const pctInput = screen.getByTestId('pct');
+      expect(pctInput).toBeTruthy()
+
+      const commentary = screen.getByTestId('commentary');
+      expect(commentary).toBeTruthy()
+
+      const fileInput = screen.getByTestId('file');
+      expect(fileInput).toBeTruthy()
+    })
+
+    describe("When I add an non-image file as bill proof", () => {
+      test("i cant submit and alert appear", () => {
+        const html = NewBillUI()
+        document.body.innerHTML = html
+        const fileInput = screen.getByTestId('file');
+        fileInput.file = [new File([""], "test.txt", { type: "text/plain" })]
+        const submitButton = screen.getByTestId('submit-button')
+        submitButton.click()
+        global.alert = jest.fn()
+        expect(global.alert).toBeTruthy()
+      })
+    })
+
+
   })
 })
