@@ -7,7 +7,7 @@ import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
 import { waitFor } from '@testing-library/dom';
 
-/-------andreas-------/
+/*-------andreas-------*/
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
@@ -21,7 +21,7 @@ describe("Given I am connected as an employee", () => {
     test("Then it should render 8 entries", () => {
       const html = NewBillUI()
       document.body.innerHTML = html
-      
+
       const expenseTypeInput = screen.getByTestId('expense-type')
       expect(expenseTypeInput).toBeTruthy()
 
@@ -59,6 +59,22 @@ describe("Given I am connected as an employee", () => {
         expect(global.alert).toBeTruthy()
       })
     })
+
+    // /* test error 404 */
+    // test("Then it should render an error 404", async () => {
+    //   const html = NewBillUI({ error: 'Erreur 404' })
+    //   document.body.innerHTML = html
+    //   const message = await screen.getByText(/Erreur 404/)
+    //   expect(message).toBeTruthy()
+    // })
+
+    // /* test error 500 */
+    // test("Then it should render an error 500", async () => {
+    //   const html = NewBillUI({ error: 'Erreur 500' })
+    //   document.body.innerHTML = html
+    //   const message = await screen.getByText(/Erreur 500/)
+    //   expect(message).toBeTruthy()
+    // })
 
 
   })

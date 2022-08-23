@@ -78,7 +78,6 @@ describe("Given I am connected as an employee", () => {
 
     /* checking erreur 404 */
     test("fail fetches bills and 404 message error appear", async () => {
-      /* fail to get localStorage */
       
       const html = BillsUI({ error: "Erreur 404" })
       document.body.innerHTML = html
