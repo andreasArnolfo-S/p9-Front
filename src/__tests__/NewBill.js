@@ -74,28 +74,39 @@ describe("Given I am connected as an employee", () => {
             type: "Employee",
           })
         );
+        /* Rendu du composant NewBillUI. */
         document.body.innerHTML = NewBillUI();
   
+        /* Mock store */
         const mockStore = {
           bills: jest.fn(() => newBill.store),
           create: jest.fn(() => Promise.resolve({})),
         };
   
+        /* Il crée une nouvelle instance de la classe NewBill. */
         const newBill = new NewBill({
           document,
           onNavigate,
           store: mockStore,
           localStorage: window.localStorage,
         });
+        /* C'est une fonction factice qui est appelée lorsque l'événement `change` est déclenché sur le
+        fichier d'entrée. */
         const handleChangeFile = jest.fn((e) => newBill.handleChangeFile(e));
+        /* Obtenir l'élément du fichier d'entrée à partir du DOM. */
         const inputFile = screen.getByTestId("file");
+        /* Il ajoute un écouteur d'événement au fichier d'entrée. */
         inputFile.addEventListener("change", handleChangeFile);
+        /* C'est une fonction qui est appelée lorsque l'événement `change` est déclenché sur le fichier
+        d'entrée. */
         fireEvent.change(inputFile, {
           target: {
             files: [new File(["image.png"], "image.png", { type: "png" })],
           },
         });
+        /* Vérifier si la fonction `handleChangeFile` a été appelée. */
         expect(handleChangeFile).toHaveBeenCalled();
+        /* Vérifier si le nom du fichier est image.png. */
         expect(inputFile.files[0].name).toBe("image.png");
       });
 
@@ -112,18 +123,25 @@ describe("Given I am connected as an employee", () => {
             type: "Employee",
           })
         );
+        /* Rendu du composant NewBillUI. */
         document.body.innerHTML = NewBillUI();
   
+        /* Il crée une nouvelle instance de la classe NewBill. */
         const newBill = new NewBill({
           document,
           onNavigate,
           store: null,
           localStorage: window.localStorage,
         });
+        /* Création d'une fonction fictive qui sera appelée lorsque le bouton d'envoi sera cliqué. */
         const handleSubmit = jest.fn(newBill.handleSubmit);
+        /* Obtenir le bouton de soumission du DOM. */
         const submitBtn = screen.getByTestId("form-new-bill");
+        /* Ajout d'un écouteur d'événement au bouton d'envoi. */
         submitBtn.addEventListener("submit", handleSubmit);
+        /* Déclenchement de l'événement submit sur le bouton submit. */
         fireEvent.submit(submitBtn);
+        /* Vérifier si la fonction `handleSubmit` a été appelée. */
         expect(handleSubmit).toHaveBeenCalled();
       });
 
