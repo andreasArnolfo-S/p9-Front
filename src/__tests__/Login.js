@@ -180,7 +180,6 @@ describe("Given that I am a user on login page", () => {
 
       const form = screen.getByTestId("form-admin");
 
-      // localStorage should be populated with form data
       Object.defineProperty(window, "localStorage", {
         value: {
           getItem: jest.fn(() => null),

@@ -146,13 +146,38 @@ describe("Given I am connected as an employee", () => {
       });
 
       test("i cant submit and alert appear", () => {
+        const onNavigate = (pathname) => {
+          document.body.innerHTML = ROUTES({ pathname });
+        };
+        Object.defineProperty(window, "localStorage", {
+          value: localStorageMock,
+        });
+        window.localStorage.setItem(
+          "user",
+          JSON.stringify({
+            type: "Employee",
+          })
+        );
+        
         const html = NewBillUI()
         document.body.innerHTML = html
+
+        const newBill = new NewBill({
+          document,
+          onNavigate,
+          store: jest.fn(),
+          localStorage: window.localStorage,
+        });
+
         const fileInput = screen.getByTestId('file');
         fileInput.file = [new File([""], "test.txt", { type: "text/plain" })]
+
+        const handleSubmit = jest.fn(() => newBill.handleSubmit)
         const submitButton = screen.getByTestId('submit-button')
-        submitButton.click()
+        submitButton.addEventListener('submit', handleSubmit)
+        fireEvent.submit(submitButton)
         global.alert = jest.fn()
+        expect(handleSubmit).toHaveBeenCalled()
         expect(global.alert).toBeTruthy()
       })
     })
