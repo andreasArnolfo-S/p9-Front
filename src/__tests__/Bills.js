@@ -60,7 +60,6 @@ describe("Given I am connected as an employee", () => {
           document.body.innerHTML = ROUTES({ pathname });
         };
         const store = null;
-        // CHANGE VARIABLE NAME !!!
         const billsPage = new Bills({
           document,
           onNavigate,
@@ -128,5 +127,24 @@ describe("Given I am connected as an employee", () => {
       await waitFor(() => mockStore.bills());
       expect(billsFetche).toHaveBeenCalled();
     });
+    test("fail fetches bills and 404 message error appear", async () => {
+      /* Création d'un nouvel élément HTML avec le message d'erreur. */
+      const html = BillsUI({ error: "Erreur 404" })
+      document.body.innerHTML = html
+      /* Obtenir le message d'erreur du DOM. */
+      const message = await screen.getByText(/Erreur 404/)
+      /* Vérifier si le message est présent dans le DOM. */
+      expect(message).toBeTruthy()
+    })
+
+    test("fetches messages and fails with 500 message error", async () => {
+      /* Création d'un nouvel élément HTML avec le message d'erreur. */
+      const html = BillsUI({ error: "Erreur 500" })
+      document.body.innerHTML = html
+      /* Obtenir le message d'erreur du DOM. */
+      const message = await screen.getByText(/Erreur 500/)
+      /* Vérifier si le message est présent dans le DOM. */
+      expect(message).toBeTruthy()
+    })
   });
 });
