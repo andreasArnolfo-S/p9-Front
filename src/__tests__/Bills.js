@@ -59,11 +59,10 @@ describe("Given I am connected as an employee", () => {
         const onNavigate = (pathname) => {
           document.body.innerHTML = ROUTES({ pathname });
         };
-        const store = null;
         const billsPage = new Bills({
           document,
           onNavigate,
-          store,
+          store: null,
           localStorage: window.localStorage,
         });
         const handleClickNewBill = jest.fn(billsPage.handleClickNewBill);

@@ -10,7 +10,7 @@ import { fireEvent } from '@testing-library/dom';
 import userEvent from "@testing-library/user-event";
 import { bills } from "../fixtures/bills.js"
 import { localStorageMock } from './../__mocks__/localStorage';
-import store from "../__mocks__/store.js";
+import mockStore from "../__mocks__/store.js";
 
 /*-------andreas-------*/
 
@@ -62,27 +62,10 @@ describe("Given I am connected as an employee", () => {
 
     describe("When I add an image file as bill proof", () => {
       test("Then it should change input file", () => {
-        const onNavigate = (pathname) => {
-          document.body.innerHTML = ROUTES({ pathname });
-        };
-        Object.defineProperty(window, "localStorage", {
-          value: localStorageMock,
-        });
-        window.localStorage.setItem(
-          "user",
-          JSON.stringify({
-            type: "Employee",
-          })
-        );
+
         /* Rendu du composant NewBillUI. */
         document.body.innerHTML = NewBillUI();
-  
-        /* Mock store */
-        const mockStore = {
-          bills: jest.fn(() => newBill.store),
-          create: jest.fn(() => Promise.resolve({})),
-        };
-  
+ 
         /* Il crée une nouvelle instance de la classe NewBill. */
         const newBill = new NewBill({
           document,
@@ -111,19 +94,7 @@ describe("Given I am connected as an employee", () => {
       });
 
       test("Then it should create a new bill", () => {
-        const onNavigate = (pathname) => {
-          document.body.innerHTML = ROUTES({ pathname });
-        };
-        Object.defineProperty(window, "localStorage", {
-          value: localStorageMock,
-        });
-        window.localStorage.setItem(
-          "user",
-          JSON.stringify({
-            type: "Employee",
-          })
-        );
-        /* Rendu du composant NewBillUI. */
+       /* Rendu du composant NewBillUI. */
         document.body.innerHTML = NewBillUI();
   
         /* Il crée une nouvelle instance de la classe NewBill. */
@@ -146,20 +117,7 @@ describe("Given I am connected as an employee", () => {
       });
 
       test("i cant submit and alert appear", () => {
-        const onNavigate = (pathname) => {
-          document.body.innerHTML = ROUTES({ pathname });
-        };
-        Object.defineProperty(window, "localStorage", {
-          value: localStorageMock,
-        });
-        window.localStorage.setItem(
-          "user",
-          JSON.stringify({
-            type: "Employee",
-          })
-        );
-        
-        const html = NewBillUI()
+       const html = NewBillUI()
         document.body.innerHTML = html
 
         const newBill = new NewBill({
@@ -173,12 +131,46 @@ describe("Given I am connected as an employee", () => {
         fileInput.file = [new File([""], "test.txt", { type: "text/plain" })]
 
         const handleSubmit = jest.fn(() => newBill.handleSubmit)
-        const submitButton = screen.getByTestId('submit-button')
+        const submitButton = screen.getByTestId('form-new-bill')
         submitButton.addEventListener('submit', handleSubmit)
         fireEvent.submit(submitButton)
-        global.alert = jest.fn()
+        window.alert = jest.fn()
         expect(handleSubmit).toHaveBeenCalled()
-        expect(global.alert).toBeTruthy()
+        expect(window.alert).toBeTruthy()
+      })
+      test("if create is not resolved, catch should be executed ", () => {
+        /* Rendu du composant NewBillUI. */
+        document.body.innerHTML = NewBillUI();
+  
+        /* Mock store */
+        const mockStore = {
+          bills: jest.fn(() => newBill.store),
+          create: jest.fn(() => Promise.reject({})),
+        };
+  
+        /* Il crée une nouvelle instance de la classe NewBill. */
+        const newBill = new NewBill({
+          document,
+          onNavigate,
+          store: mockStore,
+          localStorage: window.localStorage,
+        });
+        /* C'est une fonction factice qui est appelée lorsque l'événement `change` est déclenché sur le
+        fichier d'entrée. */
+        const handleChangeFile = jest.fn((e) => newBill.handleChangeFile(e));
+        /* Obtenir l'élément du fichier d'entrée à partir du DOM. */
+        const inputFile = screen.getByTestId("file");
+        /* Il ajoute un écouteur d'événement au fichier d'entrée. */
+        inputFile.addEventListener("change", handleChangeFile);
+        /* C'est une fonction qui est appelée lorsque l'événement `change` est déclenché sur le fichier
+        d'entrée. */
+        fireEvent.change(inputFile, {
+          target: {
+            files: [new File(["image.png"], "image.png", { type: "png" })],
+          },
+        });
+        /* Vérifier si la fonction `handleChangeFile` a été appelée. */
+        expect(handleChangeFile).toThrowError();
       })
     })
 
