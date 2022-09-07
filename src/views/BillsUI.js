@@ -4,6 +4,11 @@ import LoadingPage from "./LoadingPage.js"
 
 import Actions from './Actions.js'
 
+const sortBills = (bills) => {
+  bills.sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
+  return bills
+}
+
 const row = (bill) => {
   return (`
     <tr>
@@ -69,7 +74,7 @@ export default ({ data: bills, loading, error }) => {
               </tr>
           </thead>
           <tbody data-testid="tbody">
-            ${rows(bills)}
+            ${rows(sortBills(bills))}
           </tbody>
           </table>
         </div>

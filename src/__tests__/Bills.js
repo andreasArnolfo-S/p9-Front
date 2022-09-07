@@ -20,16 +20,16 @@ jest.mock("../app/store", () => mockStore);
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
+    Object.defineProperty(window, "localStorage", {
+      value: localStorageMock,
+    });
+    window.localStorage.setItem(
+      "user",
+      JSON.stringify({
+        type: "Employee",
+      })
+    );
     test("Then bill icon in vertical layout should be highlighted", async () => {
-      Object.defineProperty(window, "localStorage", {
-        value: localStorageMock,
-      });
-      window.localStorage.setItem(
-        "user",
-        JSON.stringify({
-          type: "Employee",
-        })
-      );
       const root = document.createElement("div");
       root.setAttribute("id", "root");
       document.body.append(root);
@@ -48,7 +48,7 @@ describe("Given I am connected as an employee", () => {
           /^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/i
         )
         .map((a) => a.innerHTML);
-      const antiChrono = (a, b) => (a < b ? 1 : +1);
+      const antiChrono = (a, b) => (a < b ? 1 : -1);
       const datesSorted = [...dates].sort(antiChrono);
       expect(dates).toEqual(datesSorted);
     });
@@ -79,16 +79,15 @@ describe("Given I am connected as an employee", () => {
     });
 
     describe("When I click on an icon eye", () => {
-      test("A modal should open", () => {
+      test("handleClickIconEye should be called", () => {
         document.body.innerHTML = BillsUI({ data: bills });
         const onNavigate = (pathname) => {
           document.body.innerHTML = ROUTES({ pathname });
         };
-        const store = null;
         const billsPage = new Bills({
           document,
           onNavigate,
-          store,
+          store: null,
           localStorage: window.localStorage,
         });
         $.fn.modal = jest.fn();
@@ -97,33 +96,30 @@ describe("Given I am connected as an employee", () => {
         eye.addEventListener("click", function () {
           handleClickIconEye(eye);
         });
-        console.dir("eye", eye.parentElement.innerHTML);
         userEvent.click(eye);
         expect(handleClickIconEye).toHaveBeenCalled();
 
-        const modale = document.getElementById("modaleFile");
-        expect(modale).toBeTruthy();
       });
     });
 
+    /* Test de la route des factures. */
     test("fetches bills from mock API GET", async () => {
-      Object.defineProperty(window, "localStorage", {
-        value: localStorageMock,
-      });
-      window.localStorage.setItem(
-        "user",
-        JSON.stringify({
-          type: "Employee",
-        })
-      );
+      /* Création d'un élément div dans le DOM. */
       const root = document.createElement("div");
+      /* Création d'un élément div avec l'id de root. */
       root.setAttribute("id", "root");
+      /* Ajout d'un élément div au corps du document. */
       document.body.append(root);
+      /* Appel de la fonction routeur. */
       router();
+      /* Fonction définie dans le fichier Router.js. */
       window.onNavigate(ROUTES_PATH.Bills);
 
+      /* Espionnage de la fonction mockStore.bills. */
       const billsFetche = jest.spyOn(mockStore, "bills");
+      /* En attente de l'appel de la fonction mockStore.bills(). */
       await waitFor(() => mockStore.bills());
+      /* Vérifier si la fonction `mockStore.bills` a été appelée. */
       expect(billsFetche).toHaveBeenCalled();
     });
     test("fail fetches bills and 404 message error appear", async () => {
